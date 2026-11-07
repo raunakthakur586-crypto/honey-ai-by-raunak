@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#090909" />
+  <title>HONEY AI BY RAUNAK</title>
+  <style>
+    :root{--gold:#e8bd62;--gold2:#ffdf91;--bg:#090909;--panel:#121212;--muted:#9b9589}
+    *{box-sizing:border-box} body{margin:0;background:radial-gradient(ellipse at 50% -20%,#3a2a12 0%,#111 38%,#080808 75%);color:#f7f2e8;font-family:Inter,system-ui,Arial,sans-serif;min-height:100vh}
+    .app{max-width:980px;margin:auto;min-height:100vh;display:flex;flex-direction:column;padding:22px 18px}
+    header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff16;padding:8px 2px 18px}
+    .brand{display:flex;align-items:center;gap:12px}.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#fff0bd,#b77a21);color:#17100a;display:grid;place-items:center;font-weight:900;font-size:22px;box-shadow:0 0 28px #dca94c55}
+    h1{font-size:16px;letter-spacing:2px;margin:0}.sub{font-size:11px;color:var(--muted);letter-spacing:2.2px;margin-top:4px}
+    .clear{background:#ffffff0b;border:1px solid #ffffff20;color:#ddd;border-radius:20px;padding:9px 13px;font-size:12px}
+    main{flex:1;display:flex;flex-direction:column;max-width:780px;width:100%;margin:0 auto}
+    .welcome{text-align:center;margin:70px 0 32px;animation:rise .7s ease}.orb{width:76px;height:76px;margin:0 auto 20px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff5cf,#e6b85c 35%,#805016 75%);box-shadow:0 0 50px #dca94c45;display:grid;place-items:center;color:#211605;font-size:35px}
+    .welcome h2{font-size:clamp(26px,6vw,42px);margin:0 0 10px;letter-spacing:-1px}.welcome h2 span{color:var(--gold2)}.welcome p{color:var(--muted);font-size:14px;line-height:1.6;margin:0}
+    .suggestions{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:0 auto 24px;width:100%;max-width:650px}
+    .suggestions button{background:#ffffff08;border:1px solid #ffffff18;color:#ddd;border-radius:14px;padding:14px;text-align:left;font-size:13px;cursor:pointer;transition:.2s}
+    .suggestions button:hover{border-color:#dcb65f88;background:#dcb65f10;transform:translateY(-2px)}
+    #chat{display:flex;flex-direction:column;gap:18px;padding:28px 0 20px}.msg{display:flex;gap:11px;align-items:flex-start;animation:rise .25s ease}.avatar{flex:0 0 30px;height:30px;border-radius:10px;background:#d8ad59;color:#1a1205;display:grid;place-items:center;font-size:12px;font-weight:900}.msg.user .avatar{background:#292929;color:#eee}.bubble{max-width:calc(100% - 42px);padding:13px 15px;border-radius:4px 15px 15px 15px;background:#171717;border:1px solid #ffffff12;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}.msg.user{flex-direction:row-reverse}.msg.user .bubble{background:#292216;border-color:#b98a3b33;border-radius:15px 4px 15px 15px}
+    .composer-wrap{position:sticky;bottom:0;padding:16px 0 8px;background:linear-gradient(transparent,#090909 18%)}.composer{display:flex;gap:9px;align-items:flex-end;background:#151515;border:1px solid #ffffff24;border-radius:18px;padding:9px;box-shadow:0 10px 35px #0008}.composer:focus-within{border-color:#d8ad5988}
+    textarea{flex:1;resize:none;max-height:140px;min-height:42px;background:transparent;border:0;outline:0;color:#fff;padding:11px 8px;font:14px/1.5 inherit}.composer button{border:0;border-radius:12px;width:42px;height:42px;cursor:pointer}.mic{background:#282828;color:#e8c578}.send{background:linear-gradient(135deg,#f4d78e,#bd842d);color:#1b1204;font-size:18px;font-weight:900}.send:disabled{opacity:.4;cursor:not-allowed}
+    .hint{text-align:center;color:#716d65;font-size:10px;margin:10px 0}.typing{color:var(--gold);font-size:12px;padding:0 0 0 42px}
+    @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    @media(max-width:560px){.app{padding:14px 12px}.welcome{margin:54px 0 26px}.suggestions{grid-template-columns:1fr}.suggestions button{padding:12px}.sub{letter-spacing:1.3px}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand"><div class="logo">H</div><div><h1>HONEY AI</h1><div class="sub">BY RAUNAK</div></div></div>
+    <button class="clear" id="clearBtn">New chat ↗</button>
+  </header>
+  <main>
+    <section class="welcome" id="welcome">
+      <div class="orb">✦</div>
+      <h2>Meet <span>Honey AI</span></h2>
+      <p>Your personal AI assistant.<br>Ask anything, explore ideas, and create something amazing.</p>
+    </section>
+    <section class="suggestions" id="suggestions">
+      <button>Explain a difficult topic simply</button>
+      <button>Help me build a website</button>
+      <button>Give me creative project ideas</button>
+      <button>Teach me something interesting</button>
+    </section>
+    <section id="chat" aria-live="polite"></section>
+    <div class="typing" id="typing" hidden>Honey is thinking…</div>
+  </main>
+  <div class="composer-wrap">
+    <div class="composer">
+      <textarea id="prompt" rows="1" placeholder="Message Honey AI…"></textarea>
+      <button class="mic" id="micBtn" title="Voice input" aria-label="Voice input">🎙</button>
+      <button class="send" id="sendBtn" title="Send" aria-label="Send">➤</button>
+    </div>
+    <div class="hint">Honey AI can make mistakes. Check important information.</div>
+  </div>
+</div>
+<script>
+const chatEl=document.getElementById('chat'), promptEl=document.getElementById('prompt');
+const welcome=document.getElementById('welcome'), suggestions=document.getElementById('suggestions');
+const sendBtn=document.getElementById('sendBtn'), typing=document.getElementById('typing');
+let history=[];
+try{history=JSON.parse(localStorage.getItem('honey-chat')||'[]');}catch{history=[];}
+function addMessage(role,text){
+  welcome.hidden=true;suggestions.hidden=true;
+  const row=document.createElement('div');row.className='msg '+(role==='user'?'user':'assistant');
+  const avatar=document.createElement('div');avatar.className='avatar';avatar.textContent=role==='user'?'R':'H';
+  const bubble=document.createElement('div');bubble.className='bubble';bubble.textContent=text;
+  row.append(avatar,bubble);chatEl.append(row);window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+}
+function save(){localStorage.setItem('honey-chat',JSON.stringify(history.slice(-24)));}
+function render(){chatEl.innerHTML='';history.forEach(m=>addMessage(m.role,m.text));if(history.length){welcome.hidden=true;suggestions.hidden=true;}}
+async function send(text){
+  text=(text||promptEl.value).trim();if(!text||sendBtn.disabled)return;
+  promptEl.value='';promptEl.style.height='auto';history.push({role:'user',text});addMessage('user',text);save();
+  sendBtn.disabled=true;typing.hidden=false;
+  try{
+    const res=await fetch('/.netlify/functions/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:history.slice(-12)})});
+    const data=await res.json();if(!res.ok)throw new Error(data.error||'Request failed');
+    const answer=data.reply||'I could not generate a reply. Please try again.';
+    history.push({role:'assistant',text:answer});addMessage('assistant',answer);save();
+  }catch(err){const msg='Sorry, I could not connect right now. '+err.message+' Check that the API key and Netlify Function are set up.';addMessage('assistant',msg);}
+  finally{typing.hidden=true;sendBtn.disabled=false;promptEl.focus();}
+}
+sendBtn.addEventListener('click',()=>send());
+promptEl.addEventListener('input',()=>{promptEl.style.height='auto';promptEl.style.height=Math.min(promptEl.scrollHeight,140)+'px';});
+promptEl.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}});
+document.querySelectorAll('.suggestions button').forEach(b=>b.addEventListener('click',()=>send(b.textContent)));
+document.getElementById('clearBtn').addEventListener('click',()=>{history=[];save();chatEl.innerHTML='';welcome.hidden=false;suggestions.hidden=false;promptEl.focus();});
+const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(!SpeechRecognition){document.getElementById('micBtn').title='Voice input is not supported in this browser';}
+else{document.getElementById('micBtn').addEventListener('click',()=>{const r=new SpeechRecognition();r.lang='en-IN';r.interimResults=false;r.onresult=e=>{promptEl.value=e.results[0][0].transcript;promptEl.focus();};r.start();});}
+render();
+</script>
+</body>
+</html>
